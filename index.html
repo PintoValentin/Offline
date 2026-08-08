@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen de Comunismo — Modo offline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --grad1:#4F46E5; --grad2:#9333EA; --grad3:#DB2777;
+    --ink:#1E1B3A; --ink-dim:#6B7280;
+    --card:#FFFFFF; --card-soft:#F5F4FF;
+    --yellow:#FBBF24; --green:#10B981; --red:#F43F5E; --blue:#3B82F6; --purple:#8B5CF6;
+    --line:#E7E5F5;
+    --font-display:'Baloo 2',cursive; --font-body:'Inter',system-ui,-apple-system,sans-serif; --font-mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: radial-gradient(circle at 15% 10%, rgba(255,255,255,.14), transparent 45%), linear-gradient(135deg, var(--grad1), var(--grad2) 55%, var(--grad3));
+    background-attachment:fixed; color:var(--ink); font-family:var(--font-body); min-height:100vh;
+  }
+  #app{max-width:640px;margin:0 auto;padding:22px 16px 70px;}
+  h1,h2{font-family:var(--font-display);font-weight:700;margin:0 0 8px;color:#fff;}
+  .card h1,.card h2{color:var(--ink);}
+  p{line-height:1.5;color:var(--ink-dim);}
+  .eyebrow{font-family:var(--font-mono);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.85);margin-bottom:6px;font-weight:700;}
+  .card{background:var(--card);border-radius:20px;padding:24px;margin-bottom:18px;box-shadow:0 10px 30px rgba(30,20,70,.18);}
+  .center{text-align:center;}
+  button{font-family:var(--font-body);font-weight:800;font-size:1.1rem;border:none;border-radius:14px;padding:16px 22px;cursor:pointer;color:#fff;background:var(--blue);width:100%;box-shadow:0 6px 0 rgba(0,0,0,.15);margin-bottom:10px;}
+  button:last-child{margin-bottom:0;}
+  button:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,.15);}
+  button:disabled{opacity:.35;}
+  button.secondary{background:var(--card-soft);color:var(--purple);box-shadow:none;border:2px solid var(--line);}
+  button.ghost{background:transparent;color:var(--ink-dim);text-decoration:underline;font-weight:600;box-shadow:none;padding:6px 4px;}
+  input[type=text]{font-family:var(--font-body);background:var(--card-soft);border:2px solid var(--line);border-radius:12px;color:var(--ink);padding:12px 14px;font-size:1rem;width:100%;font-weight:600;margin-bottom:14px;}
+  .option-btn{text-align:left;padding:16px 18px;border-radius:14px;border:2px solid var(--line);background:var(--card-soft);color:var(--ink);font-weight:700;font-size:1.02rem;cursor:pointer;display:flex;gap:12px;align-items:center;width:100%;margin-bottom:10px;box-shadow:none;}
+  .letter{font-family:var(--font-mono);font-weight:800;width:30px;height:30px;border-radius:9px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .timer{font-family:var(--font-mono);font-weight:800;font-size:2.6rem;text-align:center;color:var(--purple);}
+  .timer.low{color:var(--red);}
+  .progress-outer{height:10px;background:var(--line);border-radius:8px;overflow:hidden;margin:10px 0 18px;}
+  .progress-inner{height:100%;background:var(--green);border-radius:8px;}
+  .progress-inner.low{background:var(--red);}
+  .score-hero{font-family:var(--font-mono);font-weight:800;font-size:2.6rem;color:var(--purple);text-align:center;}
+  .points-pill{font-family:var(--font-mono);font-weight:700;font-size:.85rem;padding:4px 12px;border-radius:20px;background:rgba(16,185,129,.14);color:var(--green);display:inline-block;}
+  .points-pill.zero{background:rgba(107,114,128,.14);color:var(--ink-dim);}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);}
+  .fine{font-size:.8rem;color:var(--ink-dim);}
+  video{width:100%;max-width:260px;border-radius:16px;background:#000;}
+  .photo-preview{width:200px;height:200px;border-radius:50%;object-fit:cover;border:4px solid var(--yellow);}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var QUESTIONS = [{"tipo":"multiple","pregunta":"¿Quiénes escribieron el \"Manifiesto del Partido Comunista\" en 1848?","opciones":[{"letra":"A","texto":"Karl Marx y Friedrich Engels"},{"letra":"B","texto":"Vladimir Lenin y Leon Trotsky"},{"letra":"C","texto":"Joseph Stalin y Mao Zedong"},{"letra":"D","texto":"Adam Smith y David Ricardo"}],"respuesta":"A"},{"tipo":"vf","pregunta":"Según la teoría marxista el comunismo busca la eliminación de la propiedad privada de los medios de producción.","opciones":[{"letra":"Verdadero","texto":"Verdadero"},{"letra":"Falso","texto":"Falso"}],"respuesta":"Verdadero"},{"tipo":"multiple","pregunta":"¿Qué evento de 1917 llevó al establecimiento del primer Estado socialista en Rusia?","opciones":[{"letra":"A","texto":"La Revolución Francesa"},{"letra":"B","texto":"La Revolución de Octubre"},{"letra":"C","texto":"La Revolución Cultural"},{"letra":"D","texto":"La Comuna de París"}],"respuesta":"B"},{"tipo":"texto","pregunta":"¿En qué año se disolvió oficialmente la Unión Soviética (URSS)?","opciones":[],"respuesta":"1991"},{"tipo":"vf","pregunta":"El concepto de \"lucha de clases\" es un pilar fundamental de la filosofía marxista.","opciones":[{"letra":"Verdadero","texto":"Verdadero"},{"letra":"Falso","texto":"Falso"}],"respuesta":"Verdadero"},{"tipo":"multiple","pregunta":"¿Quién fue el principal líder del Partido Comunista Chino que proclamó la República Popular China en 1949?","opciones":[{"letra":"A","texto":"Deng Xiaoping"},{"letra":"B","texto":"Mao Zedong"},{"letra":"C","texto":"Zhou Enlai"},{"letra":"D","texto":"Chiang Kai-shek"}],"respuesta":"B"},{"tipo":"multiple","pregunta":"¿Qué término acuñó o popularizó la teoría marxista para referirse a la clase trabajadora asalariada?","opciones":[{"letra":"A","texto":"Burguesía"},{"letra":"B","texto":"Proletariado"},{"letra":"C","texto":"Terratenientes"},{"letra":"D","texto":"Lumpenproletariado"}],"respuesta":"B"},{"tipo":"vf","pregunta":"La Comuna de París de 1871 es considerada un antecedente clave de la toma del poder por la clase obrera.","opciones":[{"letra":"Verdadero","texto":"Verdadero"},{"letra":"Falso","texto":"Falso"}],"respuesta":"Verdadero"},{"tipo":"texto","pregunta":"¿Qué célebre obra de crítica a la economía política fue escrita por Karl Marx y publicada en 1867?","opciones":[],"respuesta":"El Capital"},{"tipo":"multiple","pregunta":"¿Cómo se llamó el plan de industrialización y colectivización lanzado por Mao Zedong a fines de los años 50?","opciones":[{"letra":"A","texto":"La Perestroika"},{"letra":"B","texto":"El Gran Salto Adelante"},{"letra":"C","texto":"La Nueva Política Económica"},{"letra":"D","texto":"El Plan Quinquenal"}],"respuesta":"B"},{"tipo":"vf","pregunta":"En la fase comunista plena según la teoría marxista el Estado tiende a extinguirse de forma gradual.","opciones":[{"letra":"Verdadero","texto":"Verdadero"},{"letra":"Falso","texto":"Falso"}],"respuesta":"Verdadero"},{"tipo":"multiple","pregunta":"¿Qué líder soviético impulsó los procesos de reformas conocidos como Glasnost y Perestroika?","opciones":[{"letra":"A","texto":"Nikita Jrushchov"},{"letra":"B","texto":"Leonid Brézhnev"},{"letra":"C","texto":"Mijaíl Gorbachov"},{"letra":"D","texto":"Yuri Andrópov"}],"respuesta":"C"},{"tipo":"texto","pregunta":"¿En qué ciudad se firmó el tratado de creación de la URSS en 1922?","opciones":[],"respuesta":"Moscu"},{"tipo":"multiple","pregunta":"¿Qué símbolo representa tradicionalmente la alianza del proletariado industrial y el campesinado?","opciones":[{"letra":"A","texto":"La espada y el escudo"},{"letra":"B","texto":"El hoz y el martillo"},{"letra":"C","texto":"La estrella y el fusil"},{"letra":"D","texto":"La balanza y el arado"}],"respuesta":"B"},{"tipo":"vf","pregunta":"Tanto Karl Marx como Friedrich Engels nacieron en el territorio que hoy constituye Alemania.","opciones":[{"letra":"Verdadero","texto":"Verdadero"},{"letra":"Falso","texto":"Falso"}],"respuesta":"Verdadero"}];
+var TITLE = "Examen de Comunismo";
+var QUESTION_TIME_SEC = 20;
+var SCORE_TO_WIN = 10000;
+
+var state = {
+  step:'name', started:false, idx:-1, score:0, name:'', photo:null, camStream:null,
+  answered:false, questionStartedAt:0, timerHandle:null, results:[], finished:false, camError:null
+};
+
+function esc(s){ var d=document.createElement('div'); d.textContent=(s===undefined||s===null)?'':s; return d.innerHTML; }
+function normText(s){ return (s===undefined||s===null?'':s.toString()).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+function isCorrect(q, choice){
+  if(choice===undefined||choice===null||choice==='') return false;
+  if(q.tipo==='texto') return normText(choice)===normText(q.respuesta);
+  if(q.tipo==='vf') return normText(choice)===normText(q.respuesta);
+  return choice.toString().trim().toUpperCase()===q.respuesta.toString().trim().toUpperCase();
+}
+function pointsFor(secondsElapsed){
+  var capped = Math.max(0, Math.min(QUESTION_TIME_SEC, secondsElapsed));
+  var pts = 1000 - Math.floor(capped)*50;
+  return Math.max(0, pts);
+}
+function displayCorrect(q){
+  if(q.tipo==='multiple'){
+    for(var i=0;i<q.opciones.length;i++){ if(q.opciones[i].letra.toUpperCase()===q.respuesta.toUpperCase()) return q.opciones[i].letra+'. '+q.opciones[i].texto; }
+  }
+  return q.respuesta;
+}
+
+function render(){
+  var app = document.getElementById('app');
+  app.innerHTML = screenHTML();
+  attach();
+}
+
+function screenHTML(){
+  if(!state.started){
+    if(state.step==='photo') return photoScreen();
+    return nameScreen();
+  }
+  if(state.finished) return finishedScreen();
+  return questionScreen();
+}
+
+function nameScreen(){
+  return '<div class="center"><div class="eyebrow">Modo offline de emergencia</div><h1>🏁 '+esc(TITLE)+'</h1></div>'+
+  '<div class="card">'+
+    '<p><b>Este modo funciona sin conexión.</b> Son las mismas '+QUESTIONS.length+' preguntas y las mismas reglas: '+
+    '1000 pts por acierto, menos 50 por cada segundo que tardás, '+QUESTION_TIME_SEC+' segundos por pregunta. '+
+    'Si llegás a '+SCORE_TO_WIN.toLocaleString('es')+' puntos antes de terminar, listo, ¡ganaste!</p>'+
+    '<label class="fine">Tu nombre</label>'+
+    '<input type="text" id="nameInput" maxlength="18" placeholder="Ej: Juana P." value="'+esc(state.name)+'">'+
+    '<button id="nextToPhotoBtn" '+(state.name.trim()?'':'disabled')+'>Siguiente: sacate una foto 📷</button>'+
+  '</div>';
+}
+
+function photoScreen(){
+  var body = '<div class="center"><div class="eyebrow">'+esc(TITLE)+'</div><h1 style="color:#fff;">📷 Sacate una foto</h1></div>'+
+  '<div class="card center">'+
+    '<p class="fine">Va a aparecer en tu tarjeta de resultado al final.</p>'+
+    (state.camError ? '<p class="fine" style="color:var(--red);">'+esc(state.camError)+'</p>' : '') +
+    '<div id="camArea">';
+  if(state.photo){
+    body += '<img class="photo-preview" src="'+state.photo+'">';
+  } else {
+    body += '<video id="camVideo" autoplay playsinline muted></video>';
+  }
+  body += '</div><div style="margin-top:16px;">';
+  if(state.photo){
+    body += '<button class="secondary" id="retakeBtn">🔄 Repetir foto</button>'+
+            '<button id="startBtn">Comenzar 🏁</button>';
+  } else {
+    body += '<button id="captureBtn">📸 Capturar</button>'+
+            '<button class="secondary" id="retryCamBtn">🔄 No veo la cámara, reintentar</button>';
+  }
+  body += '</div><button class="ghost" id="backToNameBtn">← Volver a mi nombre</button></div>';
+  return body;
+}
+
+function questionScreen(){
+  var q = QUESTIONS[state.idx];
+  var header = '<div class="eyebrow" style="color:rgba(255,255,255,.85);">Pregunta '+(state.idx+1)+' de '+QUESTIONS.length+' &nbsp;·&nbsp; '+state.score.toLocaleString('es')+' pts</div>'+
+    '<h1 style="color:#fff;font-size:1.3rem;">'+esc(q.pregunta)+'</h1>';
+  if(state.answered){
+    var r = state.results[state.results.length-1];
+    return header + '<div class="card center">'+
+      '<div style="font-size:2.4rem;">'+(r.correct?'✅':'❌')+'</div>'+
+      '<h2>'+(r.correct?'¡Correcto!':'Incorrecto')+'</h2>'+
+      '<div class="points-pill '+(r.points===0?'zero':'')+'">+'+r.points+' pts</div>'+
+      '<p style="margin-top:10px;">Respuesta correcta: <b style="color:var(--green)">'+esc(displayCorrect(q))+'</b></p>'+
+      '<div class="score-hero">'+state.score.toLocaleString('es')+' <span style="font-size:.9rem;color:var(--ink-dim);">/ '+SCORE_TO_WIN.toLocaleString('es')+' pts</span></div>'+
+      '<button id="nextBtn" style="margin-top:16px;">'+(state.score>=SCORE_TO_WIN||state.idx>=QUESTIONS.length-1?'Ver resultado 🏆':'Siguiente pregunta ➜')+'</button>'+
+    '</div>';
+  }
+  var optsHtml = '';
+  if(q.tipo==='texto'){
+    optsHtml = '<input type="text" id="textAnswer" placeholder="Escribí tu respuesta" style="margin-bottom:12px;"><button id="submitTextBtn">Enviar respuesta</button>';
+  } else {
+    for(var i=0;i<q.opciones.length;i++){
+      var o = q.opciones[i];
+      optsHtml += '<button class="option-btn" data-choice="'+esc(o.letra)+'"><span class="letter">'+esc(o.letra.length<=1?o.letra:o.letra[0])+'</span> '+esc(o.texto)+'</button>';
+    }
+  }
+  var box = '<div id="timerBox"></div>';
+  return header + box + '<div class="card">'+optsHtml+'</div>';
+}
+
+function finishedScreen(){
+  var correct = 0;
+  for(var i=0;i<state.results.length;i++){ if(state.results[i].correct) correct++; }
+  var won = state.score>=SCORE_TO_WIN;
+  var rowsHtml = '';
+  for(var j=0;j<state.results.length;j++){
+    var r = state.results[j];
+    rowsHtml += '<tr><td>P'+(r.idx+1)+'</td><td>'+(r.correct?'✅':'❌')+'</td><td>+'+r.points+' pts</td></tr>';
+  }
+  return '<div class="center"><div class="eyebrow">Terminaste</div><h1 style="color:#fff;">'+(won?'🏆 ¡Llegaste a la meta!':'🏁 Carrera terminada')+'</h1></div>'+
+  '<div class="card center">'+
+    (state.photo ? '<img class="photo-preview" src="'+state.photo+'" style="margin-bottom:14px;">' : '') +
+    '<p class="fine">'+esc(state.name)+'</p>'+
+    '<div class="score-hero">'+state.score.toLocaleString('es')+' pts</div>'+
+    '<p>'+correct+' de '+QUESTIONS.length+' correctas</p>'+
+    '<button id="shareImgBtn" style="margin-top:14px;">📥 Descargar imagen para compartir</button>'+
+    '<p style="margin-top:10px;font-weight:700;color:var(--purple);">📢 O mostrale esta pantalla al profesor/a con tu puntaje final</p>'+
+  '</div>'+
+  '<div class="card"><table><thead><tr><th>Pregunta</th><th>Resultado</th><th>Puntos</th></tr></thead><tbody>'+rowsHtml+'</tbody></table></div>';
+}
+
+function attach(){
+  var nameInput = document.getElementById('nameInput');
+  var nextToPhotoBtn = document.getElementById('nextToPhotoBtn');
+  if(nameInput){
+    nameInput.addEventListener('input', function(e){ state.name = e.target.value; nextToPhotoBtn.disabled = !state.name.trim(); });
+  }
+  if(nextToPhotoBtn){ nextToPhotoBtn.addEventListener('click', function(){ state.step='photo'; render(); startCamera(); }); }
+
+  var backToNameBtn = document.getElementById('backToNameBtn');
+  if(backToNameBtn){ backToNameBtn.addEventListener('click', function(){ stopCamera(); state.step='name'; render(); }); }
+  var captureBtn = document.getElementById('captureBtn');
+  if(captureBtn){ captureBtn.addEventListener('click', capturePhoto); }
+  var retryCamBtn = document.getElementById('retryCamBtn');
+  if(retryCamBtn){ retryCamBtn.addEventListener('click', function(){ state.camError=null; render(); startCamera(); }); }
+  var retakeBtn = document.getElementById('retakeBtn');
+  if(retakeBtn){ retakeBtn.addEventListener('click', function(){ state.photo=null; render(); startCamera(); }); }
+  var startBtn = document.getElementById('startBtn');
+  if(startBtn){ startBtn.addEventListener('click', function(){ state.started=true; state.idx=0; state.answered=false; state.questionStartedAt=Date.now(); render(); }); }
+
+  var opts = document.querySelectorAll('.option-btn[data-choice]');
+  for(var i=0;i<opts.length;i++){ opts[i].addEventListener('click', function(e){ submit(e.currentTarget.getAttribute('data-choice')); }); }
+  var submitTextBtn = document.getElementById('submitTextBtn');
+  if(submitTextBtn){ submitTextBtn.addEventListener('click', function(){ var v = document.getElementById('textAnswer').value; if(v && v.trim()) submit(v.trim()); }); }
+  var nextBtn = document.getElementById('nextBtn');
+  if(nextBtn){ nextBtn.addEventListener('click', goNext); }
+  var shareImgBtn = document.getElementById('shareImgBtn');
+  if(shareImgBtn){ shareImgBtn.addEventListener('click', function(){ shareImgBtn.disabled=true; shareImgBtn.textContent='Generando...'; generateShareImage(function(){ shareImgBtn.disabled=false; shareImgBtn.textContent='📥 Descargar imagen para compartir'; }); }); }
+
+  if(!(state.step==='photo' && !state.started && !state.photo)){ stopCamera(); }
+  startTimerDisplayOnly();
+}
+
+function submit(choice){
+  if(state.answered) return;
+  clearTimeout(state.timerHandle);
+  var q = QUESTIONS[state.idx];
+  var secondsElapsed = (Date.now() - state.questionStartedAt) / 1000;
+  var correct = isCorrect(q, choice);
+  var points = correct ? pointsFor(secondsElapsed) : 0;
+  state.score += points;
+  state.results.push({ idx: state.idx, choice: choice, correct: correct, points: points });
+  state.answered = true;
+  render();
+}
+
+function goNext(){
+  if(state.score >= SCORE_TO_WIN || state.idx >= QUESTIONS.length-1){
+    state.finished = true;
+    render();
+    return;
+  }
+  state.idx += 1;
+  state.answered = false;
+  state.questionStartedAt = Date.now();
+  render();
+}
+
+/* ---------- Cámara ---------- */
+function startCamera(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    state.camError = 'Este navegador no soporta cámara.';
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({ video:{ facingMode:'user', width:320, height:320 } }).then(function(stream){
+    state.camStream = stream;
+    var video = document.getElementById('camVideo');
+    if(video){ video.srcObject = stream; }
+  }).catch(function(){
+    state.camError = 'No se pudo acceder a la cámara. Revisá los permisos y tocá "reintentar".';
+    render();
+  });
+}
+function stopCamera(){
+  if(state.camStream){ state.camStream.getTracks().forEach(function(t){ t.stop(); }); state.camStream=null; }
+}
+function capturePhoto(){
+  var video = document.getElementById('camVideo');
+  if(!video) return;
+  var size = 300;
+  var canvas = document.createElement('canvas');
+  canvas.width = size; canvas.height = size;
+  var ctx = canvas.getContext('2d');
+  var vw = video.videoWidth||size, vh = video.videoHeight||size;
+  var side = Math.min(vw,vh);
+  ctx.translate(size,0); ctx.scale(-1,1);
+  ctx.drawImage(video, (vw-side)/2, (vh-side)/2, side, side, 0, 0, size, size);
+  state.photo = canvas.toDataURL('image/jpeg', 0.75);
+  stopCamera();
+  render();
+}
+
+/* ---------- Timer ---------- */
+function startTimerDisplayOnly(){
+  var box = document.getElementById('timerBox');
+  if(!box || state.answered || !state.started || state.finished) return;
+  clearTimeout(state.timerHandle);
+  function tick(){
+    var box2 = document.getElementById('timerBox');
+    if(!box2) return;
+    var remainingMs = Math.max(0, (state.questionStartedAt + QUESTION_TIME_SEC*1000) - Date.now());
+    var remaining = Math.ceil(remainingMs/1000);
+    var pct = Math.max(0, Math.min(100, 100*remainingMs/(QUESTION_TIME_SEC*1000)));
+    var low = remaining<=5;
+    box2.innerHTML = '<div class="timer '+(low?'low':'')+'">'+remaining+'s</div><div class="progress-outer"><div class="progress-inner '+(low?'low':'')+'" style="width:'+pct+'%"></div></div>';
+    if(remainingMs<=0){
+      clearTimeout(state.timerHandle);
+      if(!state.answered) submit(null);
+      return;
+    }
+    state.timerHandle = setTimeout(tick, 250);
+  }
+  tick();
+}
+
+/* ---------- Imagen de resultado para compartir ---------- */
+function fitFont(ctx, text, maxWidth, startSize, weight, family){
+  var size = startSize;
+  ctx.font = weight+' '+size+'px '+family;
+  while(ctx.measureText(text).width > maxWidth && size > 16){
+    size -= 2;
+    ctx.font = weight+' '+size+'px '+family;
+  }
+  return size;
+}
+
+function generateShareImage(done){
+  var correct = 0;
+  for(var i=0;i<state.results.length;i++){ if(state.results[i].correct) correct++; }
+  var won = state.score >= SCORE_TO_WIN;
+
+  var canvas = document.createElement('canvas');
+  canvas.width = 800; canvas.height = 1000;
+  var ctx = canvas.getContext('2d');
+
+  function drawAll(){
+    var grad = ctx.createLinearGradient(0,0,800,1000);
+    grad.addColorStop(0,'#4F46E5'); grad.addColorStop(0.55,'#9333EA'); grad.addColorStop(1,'#DB2777');
+    ctx.fillStyle = grad; ctx.fillRect(0,0,800,1000);
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'rgba(255,255,255,.85)';
+    ctx.font = "700 20px 'JetBrains Mono', monospace";
+    ctx.fillText('CARRERA DEL EXAMEN', 400, 70);
+
+    ctx.fillStyle = '#fff';
+    var titleSize = fitFont(ctx, TITLE, 680, 42, '800', "'Baloo 2', cursive");
+    ctx.font = "800 "+titleSize+"px 'Baloo 2', cursive";
+    ctx.fillText(TITLE, 400, 125);
+
+    function drawRest(){
+      ctx.fillStyle = '#fff';
+      ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.arc(400, 430, 150, 0, Math.PI*2); ctx.stroke();
+
+      var nameSize = fitFont(ctx, state.name||'Jugador/a', 680, 44, '800', "'Baloo 2', cursive");
+      ctx.font = "800 "+nameSize+"px 'Baloo 2', cursive";
+      ctx.fillText(state.name||'Jugador/a', 400, 645);
+
+      ctx.font = "800 72px 'JetBrains Mono', monospace";
+      ctx.fillStyle = won ? '#FBBF24' : '#fff';
+      ctx.fillText(state.score.toLocaleString('es')+' pts', 400, 745);
+
+      ctx.font = "600 26px 'Inter', sans-serif";
+      ctx.fillStyle = 'rgba(255,255,255,.9)';
+      var line = (won ? '🏆 ¡Llegó a la meta! · ' : '') + correct + ' de ' + QUESTIONS.length + ' correctas';
+      ctx.fillText(line, 400, 800);
+
+      ctx.font = "500 18px 'Inter', sans-serif";
+      ctx.fillStyle = 'rgba(255,255,255,.6)';
+      ctx.fillText('Modo offline · sin conexión', 400, 950);
+
+      canvas.toBlob(function(blob){
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        var safeName = (state.name||'jugador').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'') || 'jugador';
+        a.href = url; a.download = 'resultado_'+safeName+'.png';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 3000);
+        if(done) done();
+      });
+    }
+
+    if(state.photo){
+      var img = new Image();
+      img.onload = function(){
+        ctx.save();
+        ctx.beginPath(); ctx.arc(400, 430, 146, 0, Math.PI*2); ctx.closePath(); ctx.clip();
+        ctx.drawImage(img, 254, 284, 292, 292);
+        ctx.restore();
+        drawRest();
+      };
+      img.onerror = drawRest;
+      img.src = state.photo;
+    } else {
+      drawRest();
+    }
+  }
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(drawAll);
+  } else {
+    drawAll();
+  }
+}
+
+render();
+</script>
+</body>
+</html>
